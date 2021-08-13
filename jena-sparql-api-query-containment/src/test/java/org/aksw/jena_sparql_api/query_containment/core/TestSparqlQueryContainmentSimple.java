@@ -24,21 +24,23 @@ import org.junit.Test;
 
 public class TestSparqlQueryContainmentSimple {
 
+    /*
+    Notes:
+    Order by clause seems not to be supported.
+    Aliases in select clause not supported.
+    Aliases in bind not supported.
+    Sequence paths are not supported.
+
+    */
+
     private final String url_test_dir = System.getProperty("user.dir") + "/src/test/java/org/aksw/jena_sparql_api/query_containment/core";
-
-    @Test
-    public void testSimpleQuery() throws IOException {
-        String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__simple_query_alt1.txt"));
-        String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__simple_query_alt2.txt"));
-
-        printOutQueryContainments(vStr, qStr);
-    }
 
     @Test
     public void testOptionalWhereClause() throws IOException {
         String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__optional_where_clause_alt1.txt"));
         String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__optional_where_clause_alt2.txt"));
         printOutQueryContainments(vStr, qStr);
+        printOutQueryContainments(qStr, vStr);
     }
 
     @Test
@@ -46,46 +48,73 @@ public class TestSparqlQueryContainmentSimple {
         String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__rdf_type_predicate_alt1.txt"));
         String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__rdf_type_predicate_alt2.txt"));
         printOutQueryContainments(vStr, qStr);
+        printOutQueryContainments(qStr, vStr);
     }
 
     @Test
     public void testLeaveOutSubjectInTripleStatements() throws IOException {
-
+        String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__leave_out_subject_in_triple_statements_alt1.txt"));
+        String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__leave_out_subject_in_triple_statements_alt2.txt"));
+        printOutQueryContainments(vStr, qStr);
+        printOutQueryContainments(qStr, vStr);
     }
 
     @Test
     public void testOrderOfTripleStatements() throws IOException {
-
+        String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__order_of_triple_statements_alt1.txt"));
+        String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__order_of_triple_statements_alt2.txt"));
+        printOutQueryContainments(vStr, qStr);
+        printOutQueryContainments(qStr, vStr);
     }
 
     @Test
     public void testAliasViaBind() throws IOException {
-
+        // failed with original query
+        String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__alias_via_bind_alt1.txt"));
+        String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__alias_via_bind_alt2.txt"));
+        printOutQueryContainments(vStr, qStr);
+        printOutQueryContainments(qStr, vStr);
     }
 
     @Test
     public void testVariableNames() throws IOException {
-
+        // failed with original query
+        String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__variable_names_alt1.txt"));
+        String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__variable_names_alt2.txt"));
+        printOutQueryContainments(vStr, qStr);
+        printOutQueryContainments(qStr, vStr);
     }
 
     @Test
     public void testVariablesNotBound() throws IOException {
-
+        String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__variables_not_bound_alt1.txt"));
+        String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__variables_not_bound_alt2.txt"));
+        printOutQueryContainments(vStr, qStr);
+        printOutQueryContainments(qStr, vStr);
     }
 
     @Test
     public void testInvertedPaths() throws IOException {
-
+        String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__inverted_paths_alt1.txt"));
+        String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__inverted_paths_alt2.txt"));
+        printOutQueryContainments(vStr, qStr);
+        printOutQueryContainments(qStr, vStr);
     }
 
     @Test
     public void testSequencePaths() throws IOException {
-
+        String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__sequence_paths_alt1.txt"));
+        String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__sequence_paths_alt2.txt"));
+        printOutQueryContainments(vStr, qStr);
+        printOutQueryContainments(qStr, vStr);
     }
 
     @Test
     public void testPrefixAlias() throws IOException {
-
+        String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__prefix_alias_alt1.txt"));
+        String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__prefix_alias_alt2.txt"));
+        printOutQueryContainments(vStr, qStr);
+        printOutQueryContainments(qStr, vStr);
     }
 
     public static void printOutQueryContainments(String vStr, String qStr) {
