@@ -1,5 +1,12 @@
 package org.aksw.jena_sparql_api.query_containment.core;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
@@ -17,41 +24,68 @@ import org.junit.Test;
 
 public class TestSparqlQueryContainmentSimple {
 
+    private final String url_test_dir = System.getProperty("user.dir") + "/src/test/java/org/aksw/jena_sparql_api/query_containment/core";
+
     @Test
-    public void test() {
-        printOutQueryContainments("SELECT * { ?a ?b ?c }", "SELECT * { ?s ?p ?o . FILTER(?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>) }");
-    }
-
-    /**
-     * Adapted example from http://sparql-qc-bench.inrialpes.fr/UCQProj.html#p3
-     * in qStr the variables were renamed
-     */
-    @Test
-    public void testInrialpesQcUcqProj3() {
-
-        String vStr = "PREFIX : <> \n" +
-                "\n" +
-                "SELECT ?x ?y ?z WHERE {\n" +
-                "	?x a :Student .\n" +
-                "	?x :registeredAt ?y .\n" +
-                "	?x :placeOfBirth ?z .\n" +
-                "	?y a :University .\n" +
-                "	?y :locatedAt ?z .	\n" +
-                "	?z a :City .\n" +
-                "}";
-
-        String qStr = "PREFIX : <> \n" +
-                "\n" +
-                "SELECT ?a ?b ?c WHERE {\n" +
-                "	?a a :Student .\n" +
-                "	?a :registeredAt ?b .\n" +
-                "	?b a :University .\n" +
-                "	?a :placeOfBirth ?c .\n" +
-                "	?c a :City .\n" +
-                "	?b :locatedAt ?c .	\n" +
-                "}";
+    public void testSimpleQuery() throws IOException {
+        String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__simple_query_alt1.txt"));
+        String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__simple_query_alt2.txt"));
 
         printOutQueryContainments(vStr, qStr);
+    }
+
+    @Test
+    public void testOptionalWhereClause() throws IOException {
+        String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__optional_where_clause_alt1.txt"));
+        String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__optional_where_clause_alt2.txt"));
+        printOutQueryContainments(vStr, qStr);
+    }
+
+    @Test
+    public void testRDFTypePredicate() throws IOException {
+        String vStr = Files.readString(Path.of(url_test_dir + "/test_normalization__rdf_type_predicate_alt1.txt"));
+        String qStr = Files.readString(Path.of(url_test_dir + "/test_normalization__rdf_type_predicate_alt2.txt"));
+        printOutQueryContainments(vStr, qStr);
+    }
+
+    @Test
+    public void testLeaveOutSubjectInTripleStatements() throws IOException {
+
+    }
+
+    @Test
+    public void testOrderOfTripleStatements() throws IOException {
+
+    }
+
+    @Test
+    public void testAliasViaBind() throws IOException {
+
+    }
+
+    @Test
+    public void testVariableNames() throws IOException {
+
+    }
+
+    @Test
+    public void testVariablesNotBound() throws IOException {
+
+    }
+
+    @Test
+    public void testInvertedPaths() throws IOException {
+
+    }
+
+    @Test
+    public void testSequencePaths() throws IOException {
+
+    }
+
+    @Test
+    public void testPrefixAlias() throws IOException {
+
     }
 
     public static void printOutQueryContainments(String vStr, String qStr) {
@@ -84,47 +118,12 @@ public class TestSparqlQueryContainmentSimple {
             System.out.println(rm);
         });
         System.out.println("End of containment mappings");
+
+        boolean isContained = SparqlQueryContainmentUtils.tryMatch(v, q);
+        System.out.println("Is contained: " + isContained);
     }
 
 
-    @Test
-    public void testIssue35() {
-        String q1 = ""
-            + "SELECT  ?instancia ?instanciaLabel ?i0 ?predicate_i0 ?i0Label\n"
-            + "FROM <http://dbpedia.org>\n"
-            + "WHERE\n"
-            + "  { ?instancia  a                   <http://dbpedia.org/ontology/Musical> ;\n"
-            + "              ?predicate_i0         ?i0\n"
-            + "    FILTER ( ?predicate_i0 = <http://dbpedia.org/ontology/musicBy> )\n"
-            + "    \n"
-            + "      { ?instancia  <http://www.w3.org/2000/01/rdf-schema#label>  ?instanciaLabel\n"
-            + "        FILTER ( lang(?instanciaLabel) = \"en\" )\n"
-            + "      }\n"
-            + "    \n"
-            + "      { ?i0  <http://www.w3.org/2000/01/rdf-schema#label>  ?i0Label\n"
-            + "        FILTER ( lang(?i0Label) = \"en\" )\n"
-            + "      }\n"
-            + "  }\n";
-
-        String q2 = ""
-            + "SELECT  ?i0 ?predicate_i0 ?i0Label ?instancia ?instanciaLabel\n"
-            + "FROM <http://dbpedia.org>\n"
-            + "WHERE\n"
-            + "  { ?instancia  a                   <http://dbpedia.org/ontology/Musical> ;\n"
-            + "              ?predicate_i0         ?i0\n"
-            + "    FILTER ( ?predicate_i0 = <http://dbpedia.org/ontology/musicBy> )\n"
-            + "    \n"
-            + "      { ?i0  <http://www.w3.org/2000/01/rdf-schema#label>  ?i0Label\n"
-            + "        FILTER ( lang(?i0Label) = \"en\" )\n"
-            + "      }\n"
-            + "    \n"
-            + "      { ?instancia  <http://www.w3.org/2000/01/rdf-schema#label>  ?instanciaLabel\n"
-            + "        FILTER ( lang(?instanciaLabel) = \"en\" )\n"
-            + "      }\n"
-            + "  }\n";
-
-        printOutQueryContainments(q1, q2);
-    }
 
 }
 
