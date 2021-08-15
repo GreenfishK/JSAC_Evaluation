@@ -1,0 +1,10 @@
+PREFIX pub: <http://ontology.ontotext.com/taxonomy/>
+PREFIX publishing: <http://ontology.ontotext.com/publishing#>
+
+select ?personLabel ?party_label where {
+    ?person pub:memberOfPoliticalParty ?party .
+    ?party pub:hasValue ?value .
+    ?value pub:preferredLabel ?party_label .
+    ?person pub:preferredLabel ?personLabel .
+    filter(?personLabel = "Barack Obama"@en)
+}
